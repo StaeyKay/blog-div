@@ -6,6 +6,7 @@ const HomePage = () => {
   const API_URL= 'http://localhost:3000/blogs';
 
   const [blogs, setBlogs] = useState([]);
+  const [favorites, setFavorites] = useState([]);
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -28,6 +29,7 @@ const HomePage = () => {
           <p className='text-gray-700 mb-4'>Here you can find a collection of my latest blog posts.</p>
         </div>
         <section>
+      
           <article className='p-4 bg-white shadow-md rounded-md grid grid-cols-2 gap-6'>
             {blogs.length === 0 ? (
               <p>No blogs have been added yet</p>
