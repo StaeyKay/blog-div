@@ -21,6 +21,17 @@ const Blog = () => {
     fetchBlogs();
   }, []);
 
+  useEffect(() => {
+  const storedFavorites = localStorage.getItem("favorites");
+  if (storedFavorites) {
+    try {
+      setFavorites(JSON.parse(storedFavorites));
+    } catch (err) {
+      console.error("Failed to parse favorites from localStorage", err);
+    }
+  }
+}, []);
+
   const handleDelete = async (id) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this blog?"
@@ -35,15 +46,18 @@ const Blog = () => {
   };
 
   const addToFavorite = (id) => {
-    const confirmAdd = window.confirm(
-      "Do you want to add this blog to your favorites?"
-    );
-    if (!confirmAdd) return;
-
     const blogToAdd = blogs.find((blog) => blog.id === id);
-    if (blogToAdd) {
-      setFavorites((prev) => [...prev.blogToAdd]);
+    const isAlreadyFavorite = favorites.some((fav) => fav.id === id);
+
+    let updatedFavorites;
+    if (isAlreadyFavorite) {
+      updatedFavorites = favorites.filter((fav) => fav.id !== id);
+    } else {
+      updatedFavorites = [...favorites, blogToAdd];
     }
+
+    setFavorites(updatedFavorites);
+    localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
   };
 
   return (
@@ -59,10 +73,14 @@ const Blog = () => {
                   <h3 className="text-xl font-bold mb-2">{blog.title}</h3>
                   <div className="flex items-center space-x-4">
                     <button
-                      className="cursor-pointer hover:scale-105"
+                      className='cursor-pointer hover:scale-105'
                       onClick={() => addToFavorite(blog.id)}
                     >
-                      <Heart />
+                      <Heart className={`${
+                        favorites.some((fav) => fav.id === blog.id)
+                          ? "fill-red-700 text-red-700"
+                          : ""
+                      }`}/>
                     </button>
                     <button
                       className="cursor-pointer hover:scale-105"

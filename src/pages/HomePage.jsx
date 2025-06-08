@@ -20,6 +20,17 @@ const HomePage = () => {
     fetchBlogs()
   }, [])
 
+  useEffect(() => {
+    const favoriteBlogs = localStorage.getItem("favorites");
+    if(favoriteBlogs) {
+      try {
+        setFavorites(JSON.parse(favoriteBlogs))
+      } catch (error) {
+        console.log(error)
+      }
+    }
+  }, [])
+
   return (
     <div className='p-4 px-16 mt-10 flex flex-col space-y-10'>
       {/* All blogs should go here */}
@@ -47,7 +58,20 @@ const HomePage = () => {
         </section>
       </div>
       {/* Favourite blogs should go here */}
-      <div></div>
+      <div className='w-[50%]'>
+        <h2 className='text-xl font-bold mb-2'>Favorite Blogs</h2>
+        {favorites.length === 0 ? (
+          <p>No favorite blogs have been added yet</p>
+        ) : (
+          favorites.map(blog => (
+            <div key={blog.id} className='p-4 bg-white shadow-md rounded-md mb-4'>
+              <h3 className='text-lg font-semibold'>{blog.title}</h3>
+              <p className='text-gray-600'>{blog.description}</p>
+              <p className='text-sm text-gray-500'>Author: {blog.author}</p>
+            </div>
+          ))
+        )}
+      </div>
     </div>
   )
 }
